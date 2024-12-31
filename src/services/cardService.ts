@@ -1,4 +1,3 @@
-// services/cardService.ts
 import { v4 as uuidv4 } from 'uuid';
 import {
   Card,
@@ -8,7 +7,20 @@ import {
   CARD_TYPES
 } from '../types/card';
 
+/**
+ * Service class for card-related operations.
+ * 
+ * @class CardService
+ */
 export class CardService {
+  /**
+   * Creates a new card.
+   * 
+   * @param {CardColor} color - The color of the card.
+   * @param {CardType} type - The type of the card.
+   * @param {number} [value] - The value of the card (for number cards).
+   * @returns {Card} The created card.
+   */
   static createCard(color: CardColor, type: CardType, value?: number): Card {
     return {
       id: uuidv4(),
@@ -18,6 +30,11 @@ export class CardService {
     };
   }
 
+  /**
+   * Generates a full deck of Uno cards.
+   * 
+   * @returns {Card[]} The generated deck of cards.
+   */
   static generateDeck(): Card[] {
     const deck: Card[] = [];
 
@@ -49,10 +66,24 @@ export class CardService {
     return this.shuffleDeck(deck);
   }
 
+  /**
+   * Shuffles a deck of cards.
+   * 
+   * @param {Card[]} deck - The deck of cards to shuffle.
+   * @returns {Card[]} The shuffled deck of cards.
+   */
   static shuffleDeck(deck: Card[]): Card[] {
     return [...deck].sort(() => Math.random() - 0.5);
   }
 
+  /**
+   * Determines if a card can be played on top of another card.
+   * 
+   * @param {Card} card - The card to be played.
+   * @param {Card} topCard - The card currently on top of the discard pile.
+   * @param {CardColor} currentColor - The current color in play.
+   * @returns {boolean} True if the card can be played, false otherwise.
+   */
   static canPlayOnTop(card: Card, topCard: Card, currentColor: CardColor): boolean {
     if (card.type === CARD_TYPES.WILD || card.type === CARD_TYPES.WILD_DRAW_FOUR) {
       return true;

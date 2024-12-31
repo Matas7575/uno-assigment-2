@@ -5,6 +5,11 @@ import type { Card, CardColor, Player, CardType, GameState } from '@/types/card'
 import { CARD_TYPES, CARD_COLORS, CARD_SCORES } from '@/types/card';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * Store for managing the state of the Uno game.
+ * 
+ * @module UnoStore
+ */
 export const useUnoStore = defineStore('unoStore', () => {
   // State
   const players = ref<Player[]>([]);
@@ -36,6 +41,14 @@ export const useUnoStore = defineStore('unoStore', () => {
   const topCard = computed(() => discardPile.value[discardPile.value.length - 1] || null);
   const isPlayerTurn = computed(() => currentPlayer.value === 0);
 
+  /**
+   * Creates a new card.
+   * 
+   * @param {CardColor} color - The color of the card.
+   * @param {CardType} type - The type of the card.
+   * @param {number} [value] - The value of the card (for number cards).
+   * @returns {Card} The created card.
+   */
   function createCard(color: CardColor, type: CardType, value?: number): Card {
     return {
       id: uuidv4(),
@@ -45,6 +58,11 @@ export const useUnoStore = defineStore('unoStore', () => {
     };
   }
 
+  /**
+   * Generates a full deck of Uno cards.
+   * 
+   * @returns {Card[]} The generated deck of cards.
+   */
   function generateDeck(): Card[] {
     const deck: Card[] = [];
 
@@ -76,10 +94,21 @@ export const useUnoStore = defineStore('unoStore', () => {
     return shuffleDeck(deck);
   }
 
+  /**
+   * Shuffles a deck of cards.
+   * 
+   * @param {Card[]} deck - The deck of cards to shuffle.
+   * @returns {Card[]} The shuffled deck of cards.
+   */
   function shuffleDeck(deck: Card[]): Card[] {
     return [...deck].sort(() => Math.random() - 0.5);
   }
 
+  /**
+   * Sets up the game with the specified number of bots.
+   * 
+   * @param {number} botCount - The number of bots to include in the game.
+   */
   function setupGame(botCount: number) {
     // Initialize deck
     deck.value = generateDeck();
@@ -116,6 +145,12 @@ export const useUnoStore = defineStore('unoStore', () => {
     winner.value = '';
   }
 
+  /**
+   * Determines if a card can be played.
+   * 
+   * @param {Card} card - The card to check.
+   * @returns {boolean} True if the card can be played, false otherwise.
+   */
   function canPlayCard(card: Card): boolean {
     // Safety check for topCard
     if (!topCard.value) {
@@ -153,7 +188,12 @@ export const useUnoStore = defineStore('unoStore', () => {
     return card.type === topCard.value.type;
   }
 
-
+  /**
+   * Plays a card from the current player's hand.
+   * 
+   * @param {number} cardIndex - The index of the card in the player's hand.
+   * @param {CardColor} [selectedColor] - The selected color for wild cards.
+   */
   function playCard(cardIndex: number, selectedColor?: CardColor) {
     const player = players.value[currentPlayer.value];
     if (!player) return;
@@ -207,6 +247,12 @@ export const useUnoStore = defineStore('unoStore', () => {
     }
   }
 
+  /**
+   * Draws cards for the current player or a specified player.
+   * 
+   * @param {number} [amount=1] - The number of cards to draw.
+   * @param {string} [targetId] - The ID of the player to draw cards for.
+   */
   function drawCards(amount: number = 1, targetId?: string) {
     // If targetId is provided, find that player, otherwise use current player
     const player = targetId
@@ -247,13 +293,24 @@ export const useUnoStore = defineStore('unoStore', () => {
     }
   }
 
-  // New methods for UNO mechanics
+  /**
+   * Calls UNO for a player.
+   * 
+   * @param {string} playerId - The ID of the player calling UNO.
+   */
   function callUno(playerId: string) {
     unoState.value.lastUnoCall = playerId;
     unoState.value.unoCalled = true;
   }
 
-  function challengeUno(challengerId: string, targetId: string) {
+  /**
+   * Challenges a player's UNO call.
+   * 
+   * @param {string} challengerId - The ID of the player challenging the UNO call.
+   * @param {string} targetId - The ID of the player being challenged.
+   * @returns {boolean} True if the challenge was successful, false otherwise.
+   */
+  function challengeUno(challengerId: string, targetId: string): boolean {
     const target = players.value.find(p => p.id === targetId);
     if (target && target.hand.length === 1 && !unoState.value.unoCalled) {
       // Player failed to call UNO
@@ -265,17 +322,29 @@ export const useUnoStore = defineStore('unoStore', () => {
     return false;
   }
 
-  // Bot behavior for UNO
+  /**
+   * Determines if a bot should call UNO.
+   * 
+   * @returns {boolean} True if the bot should call UNO, false otherwise.
+   */
   function shouldBotCallUno(): boolean {
     // 80% chance to remember to call UNO
     return Math.random() < 0.8;
   }
 
+  /**
+   * Determines if a bot should challenge a missed UNO call.
+   * 
+   * @returns {boolean} True if the bot should challenge the missed UNO call, false otherwise.
+   */
   function shouldBotChallengeUno(): boolean {
     // 70% chance to notice and challenge missed UNO calls
     return Math.random() < 0.7;
   }
 
+  /**
+   * Plays the bot's turn.
+   */
   function playBotTurn() {
     const bot = players.value[currentPlayer.value];
     if (!bot || !bot.isBot) return;
@@ -334,7 +403,11 @@ export const useUnoStore = defineStore('unoStore', () => {
     }
   }
 
-  // Scoring
+  /**
+   * Calculates the score for the current hand.
+   * 
+   * @returns {number} The score for the current hand.
+   */
   function calculateHandScore(): number {
     return players.value.reduce((total, player) => {
       if (player.id !== winner.value) {
@@ -350,7 +423,12 @@ export const useUnoStore = defineStore('unoStore', () => {
     }, 0);
   }
 
-  function endHand() {
+  /**
+   * Ends the current hand and updates the scores.
+   * 
+   * @returns {boolean} True if there is a game winner, false otherwise.
+   */
+  function endHand(): boolean {
     if (winner.value) {
       // Calculate and assign score
       const score = calculateHandScore();
@@ -388,6 +466,9 @@ export const useUnoStore = defineStore('unoStore', () => {
     return false;
   }
 
+  /**
+   * Advances to the next player.
+   */
   function advancePlayer() {
     currentPlayer.value =
       (currentPlayer.value + direction.value + players.value.length) %

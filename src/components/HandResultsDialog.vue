@@ -29,10 +29,23 @@ import { computed } from 'vue';
 import { useUnoStore } from '@/store/unoStore';
 import Dialog from '@/components/ui/Dialog.vue';
 
+/**
+ * Props for the HandResultsDialog component.
+ * 
+ * @interface HandResultsDialogProps
+ * @property {boolean} modelValue - Indicates if the dialog is open.
+ */
 const props = defineProps<{
     modelValue: boolean;
 }>();
 
+/**
+ * Emits events for the HandResultsDialog component.
+ * 
+ * @interface HandResultsDialogEmits
+ * @property {Function} update:modelValue - Event emitted when the dialog's open state is updated.
+ * @property {Function} next-hand - Event emitted to start the next hand.
+ */
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void;
     (e: 'next-hand'): void;
@@ -40,21 +53,34 @@ const emit = defineEmits<{
 
 const store = useUnoStore();
 
+/**
+ * Computed property to get the current hand score of the winner.
+ * 
+ * @returns {number} The current hand score of the winner.
+ */
 const currentHandScore = computed(() =>
     store.gameState.currentHandScores[store.winner] || 0
 );
 
+/**
+ * Computed property to check if there is a game winner.
+ * 
+ * @returns {boolean} True if there is a game winner, false otherwise.
+ */
 const hasGameWinner = computed(() => {
     const winnerScore = store.gameState.totalScores[store.winner] || 0;
     return winnerScore >= store.gameState.targetScore;
 });
 
+/**
+ * Function to start the next hand.
+ * Emits the 'update:modelValue' and 'next-hand' events.
+ */
 function startNextHand() {
     emit('update:modelValue', false);
     emit('next-hand');
 }
 </script>
-
 
 <style scoped>
 .hand-results {

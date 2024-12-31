@@ -5,12 +5,14 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "docs": "typedoc"
   },
   "dependencies": {
     "core-js": "^3.8.3",
     "lucide-vue-next": "^0.456.0",
     "pinia": "^2.2.6",
+    "typedoc": "^0.27.6",
     "uuid": "^11.0.3",
     "vue": "^3.3.4",
     "vue-router": "^4.4.5"
