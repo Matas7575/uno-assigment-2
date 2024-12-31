@@ -5,21 +5,38 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "docs": "typedoc"
   },
   "dependencies": {
     "core-js": "^3.8.3",
-    "pinia": "^2.2.4",
+    "lucide-vue-next": "^0.456.0",
+    "pinia": "^2.2.6",
+    "typedoc": "^0.27.6",
+    "uuid": "^11.0.3",
+    "vue": "^3.3.4",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/uuid": "^10.0.0",
+    "@types/vue-router": "^2.0.0",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-typescript": "^5.0.8",
     "@vue/cli-service": "~5.0.0",
+    "@vue/compiler-sfc": "^3.5.12",
+    "@vue/runtime-dom": "^3.5.12",
+    "@vue/tsconfig": "^0.6.0",
+    "autoprefixer": "^10.4.20",
     "eslint-plugin-vue": "^9.29.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3",
     "vue": "^3.5.12",
     "vue-loader": "^17.4.2",
     "vue-template-compiler": "^2.7.16",
+    "vue-tsc": "^1.8.8",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
   },
